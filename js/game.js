@@ -67,18 +67,35 @@ class Game {
     // TODO: dibujar el fondo, jugador, enemigos y otros elementos
     this.background.draw();
     this.player.draw();
+
+    this.enemies.forEach(enemy => enemy.draw());
   }
 
   move() {
     // TODO: actualizar posiciones de fondo, jugador y enemigos
     this.background.move();
     this.player.move();
+
+    // mover enemigos
+    this.enemies.forEach(enemy => enemy.move());
+
+     // limpiar enemigos que salen de pantalla
+    this.enemies = this.enemies.filter(enemy => enemy.x + enemy.w > 0);
+
+    // generar enemigos cada X ticks
+    this.tick++;
+      if (this.tick % 120 === 0) {
+      this.addEnemy();
+    }
   }
 
   addEnemy() {
     // TODO: crear un enemigo y añadirlo al array de enemigos
+    if (this.tick % 1200 === 0) { // cada 2 segundos aprox si 60fps
+        const enemy = new Enemy(this.ctx);
+        this.enemies.push(enemy);
   }
-
+  }
   checkCollisions() {
     // TODO: comprobar si algún enemigo colisiona con el jugador
     // verificar si el jugador pierde y terminar el juego

@@ -2,40 +2,62 @@ class Enemy {
   constructor(ctx) {
     this.ctx = ctx;
 
-    const fromSky = Math.random() > 0.5;
+    this.sprite = new Image();
+    this.sprite.src = "imagenes/bad1.png"; 
 
-    this.x = fromSky
-      ? Math.random() * this.ctx.canvas.width
-      : this.ctx.canvas.width;
-    this.y = fromSky ? 0 : this.ctx.canvas.height * 0.85;
-    this.r = 20;
-    this.vx = 0;
-    this.vy = 0;
-    this.ay = fromSky ? 0.2 : 0;
-    this.ax = fromSky ? 0 : -0.2;
+   //tamaño del sprite
+    this.frameWidth = 581 / 3;
+    this.frameHeight = 161;
 
-    new Audio("./audio/fireball.wav").play();
+     // Usamos tamaño real
+    this.w = 518 * 0.1;
+    this.h = 161 * 0.15;
 
-    // TODO: init enemy. set x,y randomly top or right.
-    // TODO: play fireball audio
+    // Posición de aparición (fuera por la derecha)
+    this.x = this.ctx.canvas.width + 50; // 50px fuera de la pantalla
+    this.y = 360;
+    
+    // Movimiento hacia la izquierda
+    this.vx = -1.5;
+
+    this.frame = 0;
+    this.frameTick = 0;
   }
 
   draw() {
-    // TODO: draw circle
+    // Alternar frames para caminar
+    this.frameTick++;
+    if (this.frameTick % 10 === 0) {
+      this.frame = (this.frame + 1) % 2; // frame 0 y 1
+    }
+  
+    this.ctx.drawImage(
+      this.sprite,
+      this.frame * this.frameWidth, // recorte X
+      0,                            // recorte Y
+      this.frameWidth,
+      this.frameHeight,
+      this.x,
+      this.y,
+      this.w,
+      this.h
+    );
   }
 
   move() {
-    // TODO: move, add a to v and v to position
+    this.x += this.vx;
   }
 
   isVisible() {
-    // TODO: return if enemy is inside the canvas based on x and y
+    return this.x + this.w > 0;
   }
 
-  collides(p) {
-    const colX = false; // TODO: check X collision between this and p
-    const colY = false; // TODO: check Y collision between this and p
-
-    return colX && colY;
+  collides(player) {
+     return (
+      this.x < player.x + player.w &&
+      this.x + this.w > player.x &&
+      this.y < player.y + player.h &&
+      this.y + this.h > player.y
+    );
   }
 }
